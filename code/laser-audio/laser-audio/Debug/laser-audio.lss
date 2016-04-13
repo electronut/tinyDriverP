@@ -1,0 +1,311 @@
+
+laser-audio.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         0000013e  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00800060  000001b2  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss          00000008  00800060  00800060  000001b2  2**0
+                  ALLOC
+  3 .comment      00000030  00000000  00000000  000001b2  2**0
+                  CONTENTS, READONLY
+  4 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  000001e4  2**2
+                  CONTENTS, READONLY
+  5 .debug_aranges 00000030  00000000  00000000  00000220  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_info   000001e6  00000000  00000000  00000250  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_abbrev 00000163  00000000  00000000  00000436  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_line   00000153  00000000  00000000  00000599  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_frame  00000058  00000000  00000000  000006ec  2**2
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_str    000001b8  00000000  00000000  00000744  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_loc    0000009d  00000000  00000000  000008fc  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_ranges 00000020  00000000  00000000  00000999  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	10 c0       	rjmp	.+32     	; 0x22 <__ctors_end>
+   2:	1f c0       	rjmp	.+62     	; 0x42 <__bad_interrupt>
+   4:	1e c0       	rjmp	.+60     	; 0x42 <__bad_interrupt>
+   6:	1d c0       	rjmp	.+58     	; 0x42 <__bad_interrupt>
+   8:	1c c0       	rjmp	.+56     	; 0x42 <__bad_interrupt>
+   a:	1b c0       	rjmp	.+54     	; 0x42 <__bad_interrupt>
+   c:	1a c0       	rjmp	.+52     	; 0x42 <__bad_interrupt>
+   e:	19 c0       	rjmp	.+50     	; 0x42 <__bad_interrupt>
+  10:	18 c0       	rjmp	.+48     	; 0x42 <__bad_interrupt>
+  12:	17 c0       	rjmp	.+46     	; 0x42 <__bad_interrupt>
+  14:	16 c0       	rjmp	.+44     	; 0x42 <__bad_interrupt>
+  16:	15 c0       	rjmp	.+42     	; 0x42 <__bad_interrupt>
+  18:	14 c0       	rjmp	.+40     	; 0x42 <__bad_interrupt>
+  1a:	3b c0       	rjmp	.+118    	; 0x92 <__vector_13>
+  1c:	12 c0       	rjmp	.+36     	; 0x42 <__bad_interrupt>
+  1e:	11 c0       	rjmp	.+34     	; 0x42 <__bad_interrupt>
+  20:	10 c0       	rjmp	.+32     	; 0x42 <__bad_interrupt>
+
+00000022 <__ctors_end>:
+  22:	11 24       	eor	r1, r1
+  24:	1f be       	out	0x3f, r1	; 63
+  26:	cf e5       	ldi	r28, 0x5F	; 95
+  28:	d2 e0       	ldi	r29, 0x02	; 2
+  2a:	de bf       	out	0x3e, r29	; 62
+  2c:	cd bf       	out	0x3d, r28	; 61
+
+0000002e <__do_clear_bss>:
+  2e:	20 e0       	ldi	r18, 0x00	; 0
+  30:	a0 e6       	ldi	r26, 0x60	; 96
+  32:	b0 e0       	ldi	r27, 0x00	; 0
+  34:	01 c0       	rjmp	.+2      	; 0x38 <.do_clear_bss_start>
+
+00000036 <.do_clear_bss_loop>:
+  36:	1d 92       	st	X+, r1
+
+00000038 <.do_clear_bss_start>:
+  38:	a8 36       	cpi	r26, 0x68	; 104
+  3a:	b2 07       	cpc	r27, r18
+  3c:	e1 f7       	brne	.-8      	; 0x36 <.do_clear_bss_loop>
+  3e:	3d d0       	rcall	.+122    	; 0xba <main>
+  40:	7c c0       	rjmp	.+248    	; 0x13a <_exit>
+
+00000042 <__bad_interrupt>:
+  42:	de cf       	rjmp	.-68     	; 0x0 <__vectors>
+
+00000044 <setSpeed>:
+
+
+void setSpeed(int motor, int speed)
+{
+  // DDRV8835 - enable MODE pin for PWM operation
+  if (!(PORTA & (1<<PA7))){
+  44:	df 9b       	sbis	0x1b, 7	; 27
+    PORTA |= (1<<PA7);
+  46:	df 9a       	sbi	0x1b, 7	; 27
+  }
+
+  // left motor
+  if(motor == 1){
+  48:	81 30       	cpi	r24, 0x01	; 1
+  4a:	91 05       	cpc	r25, r1
+  4c:	81 f4       	brne	.+32     	; 0x6e <setSpeed+0x2a>
+    // forward
+    if(speed > 0){
+  4e:	16 16       	cp	r1, r22
+  50:	17 06       	cpc	r1, r23
+  52:	24 f4       	brge	.+8      	; 0x5c <setSpeed+0x18>
+      PORTA |= (1<<PA3);
+  54:	db 9a       	sbi	0x1b, 3	; 27
+      OCR1A = speed;
+  56:	7b bd       	out	0x2b, r23	; 43
+  58:	6a bd       	out	0x2a, r22	; 42
+  5a:	08 95       	ret
+    }
+    // reverse
+    else if(speed < 0){
+  5c:	77 23       	and	r23, r23
+  5e:	c4 f4       	brge	.+48     	; 0x90 <setSpeed+0x4c>
+      speed = -speed;
+      PORTA &= ~(1<<PA3);
+  60:	db 98       	cbi	0x1b, 3	; 27
+      PORTA |= (1<<PA3);
+      OCR1A = speed;
+    }
+    // reverse
+    else if(speed < 0){
+      speed = -speed;
+  62:	71 95       	neg	r23
+  64:	61 95       	neg	r22
+  66:	71 09       	sbc	r23, r1
+      PORTA &= ~(1<<PA3);
+      OCR1A = speed;
+  68:	7b bd       	out	0x2b, r23	; 43
+  6a:	6a bd       	out	0x2a, r22	; 42
+  6c:	08 95       	ret
+    }
+  }
+  // right motor
+  else if(motor == 2){
+  6e:	02 97       	sbiw	r24, 0x02	; 2
+  70:	79 f4       	brne	.+30     	; 0x90 <setSpeed+0x4c>
+    // forward
+    if(speed > 0){
+  72:	16 16       	cp	r1, r22
+  74:	17 06       	cpc	r1, r23
+  76:	24 f4       	brge	.+8      	; 0x80 <setSpeed+0x3c>
+      PORTA |= (1<<PA4);
+  78:	dc 9a       	sbi	0x1b, 4	; 27
+      OCR1B = speed;
+  7a:	79 bd       	out	0x29, r23	; 41
+  7c:	68 bd       	out	0x28, r22	; 40
+  7e:	08 95       	ret
+    }
+    // reverse
+    else if(speed < 0){
+  80:	77 23       	and	r23, r23
+  82:	34 f4       	brge	.+12     	; 0x90 <setSpeed+0x4c>
+      speed = -speed;
+      PORTA &= ~(1<<PA4);
+  84:	dc 98       	cbi	0x1b, 4	; 27
+      PORTA |= (1<<PA4);
+      OCR1B = speed;
+    }
+    // reverse
+    else if(speed < 0){
+      speed = -speed;
+  86:	71 95       	neg	r23
+  88:	61 95       	neg	r22
+  8a:	71 09       	sbc	r23, r1
+      PORTA &= ~(1<<PA4);
+      OCR1B = speed;
+  8c:	79 bd       	out	0x29, r23	; 41
+  8e:	68 bd       	out	0x28, r22	; 40
+  90:	08 95       	ret
+
+00000092 <__vector_13>:
+volatile unsigned int adcVal;
+volatile unsigned int sampledValue;
+int i;
+unsigned int prevVal;
+ISR(ADC_vect)
+{
+  92:	1f 92       	push	r1
+  94:	0f 92       	push	r0
+  96:	0f b6       	in	r0, 0x3f	; 63
+  98:	0f 92       	push	r0
+  9a:	11 24       	eor	r1, r1
+  9c:	8f 93       	push	r24
+  9e:	9f 93       	push	r25
+  adcVal = ADCH; // only 8 bit value  is read.
+  a0:	85 b1       	in	r24, 0x05	; 5
+  a2:	90 e0       	ldi	r25, 0x00	; 0
+  a4:	90 93 65 00 	sts	0x0065, r25
+  a8:	80 93 64 00 	sts	0x0064, r24
+  //sampledValue = adcVal/2;
+}
+  ac:	9f 91       	pop	r25
+  ae:	8f 91       	pop	r24
+  b0:	0f 90       	pop	r0
+  b2:	0f be       	out	0x3f, r0	; 63
+  b4:	0f 90       	pop	r0
+  b6:	1f 90       	pop	r1
+  b8:	18 95       	reti
+
+000000ba <main>:
+  // PA1 = audio input
+  // PA3 = GPIO for motor 1, PA4 = GPIO for motor 2
+  // PA6, PA5 = OC1A, OC1B - PWM
+  // PA7 = MODE pin HIGH for PWM mode in DRV8835
+
+  DDRA |= (1<<PA7) | (1<<PA6) | (1<<PA5) | (1<<PA4) | (1<<PA3) | (1<<PA0);
+  ba:	8a b3       	in	r24, 0x1a	; 26
+  bc:	89 6f       	ori	r24, 0xF9	; 249
+  be:	8a bb       	out	0x1a, r24	; 26
+  // laser on
+  PORTA |= (1<<PA0);
+  c0:	d8 9a       	sbi	0x1b, 0	; 27
+
+  // TIMER1 PWM configurations
+  // Phase Correct PWM, TOP = 0xFF
+  TCCR1A |= 1<<WGM10;
+  c2:	8f b5       	in	r24, 0x2f	; 47
+  c4:	81 60       	ori	r24, 0x01	; 1
+  c6:	8f bd       	out	0x2f, r24	; 47
+  // CLK/8 pre-scalar for 2KHz motor frequency
+  TCCR1B |= (1<<CS11);
+  c8:	8e b5       	in	r24, 0x2e	; 46
+  ca:	82 60       	ori	r24, 0x02	; 2
+  cc:	8e bd       	out	0x2e, r24	; 46
+  // register clear while in PWM mode
+  TCCR1C = 0x00;
+  ce:	12 bc       	out	0x22, r1	; 34
+
+  // Phase correct pwm ON - non-inverting mode
+  TCCR1A |= (1<<COM1A1)|(1<<COM1B1);
+  d0:	8f b5       	in	r24, 0x2f	; 47
+  d2:	80 6a       	ori	r24, 0xA0	; 160
+  d4:	8f bd       	out	0x2f, r24	; 47
+
+  // adc configurations - free running mode
+  PRR &= ~(1<<PRADC);  // clear adc power-off bit
+  d6:	00 98       	cbi	0x00, 0	; 0
+  ADCSRA |= 1<<ADEN;                //Power up the ADC
+  d8:	37 9a       	sbi	0x06, 7	; 6
+  ADCSRA |= 1<<ADIE;
+  da:	33 9a       	sbi	0x06, 3	; 6
+  ADMUX = 0x01;          // setting MUX1
+  dc:	81 e0       	ldi	r24, 0x01	; 1
+  de:	87 b9       	out	0x07, r24	; 7
+  ADCSRA |= ((1<<ADPS2));// | (1<<ADPS0));    //Prescaler at 64 so we have an 125Khz clock source
+  e0:	32 9a       	sbi	0x06, 2	; 6
+  ADCSRB = 1<<ADLAR;    // left adjust enabled
+  e2:	80 e1       	ldi	r24, 0x10	; 16
+  e4:	83 b9       	out	0x03, r24	; 3
+  ADCSRA |= (1<<ADATE);                //Signal source, in this case is the free-running
+  e6:	35 9a       	sbi	0x06, 5	; 6
+  sei();
+  e8:	78 94       	sei
+  ADCSRA |= (1<<ADSC);                //Start converting
+  ea:	36 9a       	sbi	0x06, 6	; 6
+
+
+  while (1){
+    for(i=0; i<100; i += 10)
+  ec:	10 92 61 00 	sts	0x0061, r1
+  f0:	10 92 60 00 	sts	0x0060, r1
+  f4:	60 e0       	ldi	r22, 0x00	; 0
+  f6:	70 e0       	ldi	r23, 0x00	; 0
+    setSpeed(1, -i);
+  f8:	71 95       	neg	r23
+  fa:	61 95       	neg	r22
+  fc:	71 09       	sbc	r23, r1
+  fe:	81 e0       	ldi	r24, 0x01	; 1
+ 100:	90 e0       	ldi	r25, 0x00	; 0
+ 102:	a0 df       	rcall	.-192    	; 0x44 <setSpeed>
+  sei();
+  ADCSRA |= (1<<ADSC);                //Start converting
+
+
+  while (1){
+    for(i=0; i<100; i += 10)
+ 104:	60 91 60 00 	lds	r22, 0x0060
+ 108:	70 91 61 00 	lds	r23, 0x0061
+ 10c:	66 5f       	subi	r22, 0xF6	; 246
+ 10e:	7f 4f       	sbci	r23, 0xFF	; 255
+ 110:	70 93 61 00 	sts	0x0061, r23
+ 114:	60 93 60 00 	sts	0x0060, r22
+ 118:	64 36       	cpi	r22, 0x64	; 100
+ 11a:	71 05       	cpc	r23, r1
+ 11c:	6c f3       	brlt	.-38     	; 0xf8 <main+0x3e>
+    setSpeed(1, -i);
+    setSpeed(2, adcVal);
+ 11e:	60 91 64 00 	lds	r22, 0x0064
+ 122:	70 91 65 00 	lds	r23, 0x0065
+ 126:	82 e0       	ldi	r24, 0x02	; 2
+ 128:	90 e0       	ldi	r25, 0x00	; 0
+ 12a:	8c df       	rcall	.-232    	; 0x44 <setSpeed>
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+ 12c:	8f e3       	ldi	r24, 0x3F	; 63
+ 12e:	9c e9       	ldi	r25, 0x9C	; 156
+ 130:	01 97       	sbiw	r24, 0x01	; 1
+ 132:	f1 f7       	brne	.-4      	; 0x130 <main+0x76>
+ 134:	00 c0       	rjmp	.+0      	; 0x136 <main+0x7c>
+ 136:	00 00       	nop
+ 138:	d9 cf       	rjmp	.-78     	; 0xec <main+0x32>
+
+0000013a <_exit>:
+ 13a:	f8 94       	cli
+
+0000013c <__stop_program>:
+ 13c:	ff cf       	rjmp	.-2      	; 0x13c <__stop_program>
