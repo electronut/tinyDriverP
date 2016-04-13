@@ -1,24 +1,16 @@
-![](tinyDriver.png)
+![](tinyDriver.jpg)
 
-## Applications of tinyDriver
+*tinyDriver* is a breakout board for the Atmel ATtiny84 chip, which
+comes integrated with a motor driver chip and an RGB LED. The idea was
+to create a convenient platform that can be used to understand
+microcontrollers in depth, by studying the datasheet and making use of
+the various features of the chip such as timers, PWM, interrupts, ADC,
+and digital I/O. The free and cross-platform avr-gcc and avrdude
+toolchain combined with cheap USB based AVR programmers makes it very
+easy to develop projects for this board. The idea is that you can use
+tinyDriver as a convenient platform to learn about tinyAVRs and
+prototype your projects.
 
-- tinyAVR course
-- 2WD robot
-- Laser Display (rotating mirrors)
-- Mechanical Iris
-- Drum machine - 2 X solenoids
-- DDS (direct digital synthesis)
-- Music synthesizer
-- Karplus strong project
-- Arduino IDE support - bootloader?
-- music robot - look at: 
-  https://www.crowdsupply.com/vivek-mano/wigl
-- expression robot - look at: http://ohbot.weebly.com/
-- serial protocol - control (motors) via python from computer
-- pentatonic laser harp
-- musical synth
-- SD card music player
-- The whistle blower
-- POV toy
-- footstep detector
-- hovercraft?
+[http://electronut.in/tinyDriver/][1]
+
+[1]: http://electronut.in/tinyDriver/
