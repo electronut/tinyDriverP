@@ -1,0 +1,24 @@
+(module TerminalBlock_5mm_1x2 (layer F.Cu) 
+  (descr "2-way 5mm pitch terminal block")
+
+  (fp_text reference P5 (at 2.794 -2.413 180) (layer F.SilkS)
+    (effects (font (size 0.4 0.4) (thickness 0.08)))
+  )
+  (fp_text value M2 (at 2.667 2.921) (layer F.Fab) hide
+    (effects (font (size 1 1) (thickness 0.15)))
+  )
+
+  (fp_line (start -5 4.5) (end 5 4.5) (layer F.SilkS) (width 0.15))
+  (fp_line (start -5 -4.5) (end 5 -4.5) (layer F.SilkS) (width 0.15))
+  (fp_line (start -5 4.5) (end -5 -4.5) (layer F.SilkS) (width 0.15))
+  (fp_line (start 5 4.5) (end 5 -4.5) (layer F.SilkS) (width 0.15))
+
+  (pad 1 thru_hole rect (at -2.5 0) (size 1.99898 1.99898) (drill 1.09728) (layers *.Cu *.Mask F.SilkS))
+  (pad 2 thru_hole oval (at 2.5 0) (size 1.99898 1.99898) (drill 1.09728) (layers *.Cu *.Mask F.SilkS))
+
+  (model Terminal_Blocks.3dshapes/TerminalBlock_Pheonix_MPT-2.54mm_2pol.wrl
+    (at (xyz 0.05 0 0))
+    (scale (xyz 1 1 1))
+    (rotate (xyz 0 0 0))
+  )
+)
