@@ -37,6 +37,10 @@ void setSpeed(int motor, int speed)
             PORTA &= ~(1<<PA3);
             OCR1A = speed;
         }
+        // turn off left motor
+        else if(speed == 0){
+            OCR1A = speed;
+        }        
     }
     // right motor
     else if(motor == 2){
@@ -50,7 +54,11 @@ void setSpeed(int motor, int speed)
             speed = -speed;
             PORTA &= ~(1<<PA4);
             OCR1B = speed;
-        }   
+        }
+        // turn off right motor   
+        else if(speed == 0){
+            OCR1B = speed;
+        }
     }
 }
 
@@ -142,6 +150,10 @@ ISR(PCINT1_vect)
     }    
 }
 
+void ledOff()
+{
+    PORTA &= ~((1 << PA0)| (1 << PA1) | (1 << PA2));
+}
 
 unsigned char dir = 1;
 
@@ -170,6 +182,12 @@ int main(void)
     // Phase correct pwm ON - non-inverting mode
     TCCR1A |= (1<<COM1A1)|(1<<COM1B1);
 	
+    // move forward 
+    dir = 1;
+    setSpeed(1, 80);
+    setSpeed(2, 80);
+    // led = green
+    PORTA |= 1<<PA0;
     
     float prevDist = 0.0;
     while(1){
@@ -185,47 +203,43 @@ int main(void)
             if(!dir){
                 // forward
                 // led = green
-                PORTA |= 1<<PA2;
-                setSpeed(1, 150);
-                setSpeed(2, 150);
+                PORTA |= 1<<PA0;
+                setSpeed(1, 80);
+                setSpeed(2, 80);
                 dir = 1;		
                 }
             _delay_ms(100);
         }
         else{
-            PORTA &= ~(1<<PA2);
-            // stop
+            // turn off LED
+            ledOff();
             // led = red    
-            PORTA |= 1<<PA0;
+            PORTA |= 1<<PA2;
+             // stop
             stopMotors();
             _delay_ms(1000);
-            PORTA &= ~(1<<PA0);	
-            // reverse
+            // turn off LED
+            ledOff();
             // led = blue
             PORTA |= 1<<PA1;
-            setSpeed(1, -150);
-            setSpeed(2, -150);
+            // reverse
+            setSpeed(1, -80);
+            setSpeed(2, -80);
             _delay_ms(2000);
-            PORTA &= ~(1<<PA1);
-            // left
+            // turn off LED
+            ledOff();
             // led = purple
-            PORTA |= ((1<<PA0) | (1<<PA1));
-            setSpeed(1, -150);
-            setSpeed(2, 150);
-            _delay_ms(1000);
-            PORTA &= ~((1<<PA0) | (1<<PA1));
-        /*    
-            // right
-            // led = yellow
             PORTA |= ((1<<PA2) | (1<<PA1));
-            setSpeed(1, 150);
-            setSpeed(2, -150);
+            // left
+            setSpeed(1, 0);
+            setSpeed(2, 80);
             _delay_ms(1000);
-            PORTA &= ~((1<<PA2) | (1<<PA1));
-        */	
+            // turn off LED
+            ledOff();
+            // reset direction 
             dir = 0;
         }
-        _delay_us(100);
+        _delay_ms(100);
     }
     return 1;
 }
